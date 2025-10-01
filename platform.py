@@ -129,5 +129,4 @@ while True:
     coloissia(platform_rect) 
 
 
-
     pygame.display.update()
