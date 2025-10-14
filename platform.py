@@ -5,7 +5,6 @@ pygame.init()
 screen=pygame.display.set_mode((736,414))
 
 pygame.display.set_caption("My Game")
-sprite=pygame.image.load("photo/sprite/sprite.png")
 platform=pygame.transform.scale(pygame.image.load("photo/platform.png"), (70,70))
 bg=pygame.image.load("photo/bg.jpg").convert()
 jump_sound=pygame.mixer.Sound("sound/jump.mp3")
@@ -49,20 +48,21 @@ walk_right=[
 left=False
 right=True
 anim=0
+anim_delay=5
 poza=None
 x_player, y_player=400, 300
-gravity=3
+gravity=1.2
 velocity_y=0
-player_speed=20
-jump_force=25
+player_speed=10
+jump_force=15
 bg_x=0
 jumping=None
 zemla=380
 bg_width, bg_height=bg.get_size()
-x_platform=[600]
-y_platform=[310]
+x_platform=[600,700]
+y_platform=[310,310]
 while True:
-    time.tick(15)
+    time.tick(60)
 
     velocity_y += gravity
     y_player += velocity_y
@@ -79,20 +79,27 @@ while True:
     if bg_x<=-bg_width: #передвижение фона
         bg_x=0 
     screen.blit(bg, (bg_x, 0))
-    screen.blit(bg, (bg_x+736, 0))
+    screen.blit(bg, (bg_x+bg_width, 0))
+    screen.blit(bg, (bg_x-bg_width, 0))
 
     if anim==3:
         anim=0
     if keys[pygame.K_a]:
         left=True
         right=False
-        anim += 1
+        anim_delay+=1
+        if anim_delay>=7:
+            anim_delay=0
+            anim+=1
         poza=None
         x_player-=player_speed
     elif keys[pygame.K_d]:
         left=False
         right=True
-        anim += 1
+        anim_delay+=1
+        if anim_delay>=7:
+            anim_delay=0
+            anim+=1
         poza=None
         x_player+=player_speed
     if keys[pygame.K_SPACE] and jumping==True:
@@ -107,11 +114,18 @@ while True:
         x_player=50
     
     if keys[pygame.K_d] and x_player>=600: #движение фона влево
-        bg_x-=20
+        bg_x-=10
         x_player=600
-        x_platform[0]-=20
-
-    if bg_x==-736:
+        for i in range(len(x_platform)):
+            x_platform[i]-=10
+    elif keys[pygame.K_a] and x_player<=150: #движение фона вправо
+        bg_x+=10
+        x_player=150
+        for i in range(len(x_platform)):
+            x_platform[i]+=10
+    if bg_x==-bg_width:
+        bg_x=0
+    elif bg_x>=bg_width:
         bg_x=0
 
     if event.type == pygame.KEYUP:   # анимация стояния персонажа             
