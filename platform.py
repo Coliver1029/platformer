@@ -6,12 +6,13 @@ screen=pygame.display.set_mode((736,414))
 
 pygame.display.set_caption("My Game")
 platform=pygame.transform.scale(pygame.image.load("photo/platform.png"), (70,70))
+platform1=pygame.transform.scale(pygame.image.load("photo/bricks.png"), (50,50))
 bg=pygame.image.load("photo/bg.jpg").convert()
 jump_sound=pygame.mixer.Sound("sound/jump.mp3")
 bg_sound=pygame.mixer.Sound("sound/sound.wav")
 bg_sound.play()
 def coloissia(w):
-        global velocity_y, jumping, x_player, y_player
+        global velocity_y, jumping, x_player, y_player, player_rect
         if player_rect.colliderect(w):
             if velocity_y > 0 and player_rect.bottom <= w.top + velocity_y:
                 y_player = w.top - razmer_persa
@@ -22,11 +23,11 @@ def coloissia(w):
                 y_player = w.bottom
                 velocity_y = 0
                 
-            elif player_rect.left < platform_rect.right and player_rect.centerx > platform_rect.right:
-                x_player = platform_rect.right
+            elif player_rect.left < w.right and player_rect.centerx > w.right:
+                x_player = w.right
 
-            elif player_rect.right > platform_rect.left and player_rect.centerx < platform_rect.left:
-                x_player = platform_rect.left - razmer_persa
+            elif player_rect.right > w.left and player_rect.centerx < w.left:
+                x_player = w.left - razmer_persa
 def poloshenie(yslovie):
     if yslovie==True:
         screen.blit(walk_left[0], (x_player, y_player))
@@ -59,8 +60,8 @@ bg_x=0
 jumping=None
 zemla=380
 bg_width, bg_height=bg.get_size()
-x_platform=[600,700]
-y_platform=[310,310]
+x_platform=[600,900]
+y_platform=[310,250]
 while True:
     time.tick(60)
 
@@ -137,10 +138,13 @@ while True:
             poza=False      
         poloshenie(poza)                          
 
-    screen.blit(platform, (x_platform[0], y_platform[0]))
     player_rect = pygame.Rect(x_player, y_player, razmer_persa, razmer_persa)
+    screen.blit(platform, (x_platform[0], y_platform[0]))
+    screen.blit(platform1, (x_platform[1], y_platform[1]))
     platform_rect = platform.get_rect(topleft=(x_platform[0], y_platform[0]))
-    coloissia(platform_rect) 
+    platform_rect1 = platform1.get_rect(topleft=(x_platform[1], y_platform[1]))
+    coloissia(platform_rect)
+    coloissia(platform_rect1)
 
 
     pygame.display.update()
