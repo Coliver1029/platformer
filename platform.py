@@ -5,8 +5,9 @@ pygame.init()
 screen=pygame.display.set_mode((736,414))
 
 pygame.display.set_caption("My Game")
-platform=pygame.transform.scale(pygame.image.load("photo/platform.png"), (70,70))
-platform1=pygame.transform.scale(pygame.image.load("photo/bricks.png"), (50,50))
+platform=pygame.transform.scale(pygame.image.load("photo/platform.png"), (48,90))
+goblin=pygame.transform.scale(pygame.image.load("photo/goblin/goblin1.png"), (50,50))
+block=pygame.transform.scale(pygame.image.load("photo/block.jpg"), (50,50))
 bg=pygame.image.load("photo/bg.jpg").convert()
 jump_sound=pygame.mixer.Sound("sound/jump.mp3")
 bg_sound=pygame.mixer.Sound("sound/sound.wav")
@@ -51,17 +52,19 @@ right=True
 anim=0
 anim_delay=5
 poza=None
-x_player, y_player=400, 300
+x_player, y_player=250, 300
 gravity=1.2
 velocity_y=0
 player_speed=10
-jump_force=15
+jump_force=17
 bg_x=0
 jumping=None
 zemla=380
 bg_width, bg_height=bg.get_size()
-x_platform=[600,900]
-y_platform=[310,250]
+x_platform=[600]
+y_platform=[285]
+x_block=[400,455,510,455]
+y_block=[320,320,320,270]
 while True:
     time.tick(60)
 
@@ -117,11 +120,15 @@ while True:
     if keys[pygame.K_d] and x_player>=600: #движение фона влево
         bg_x-=10
         x_player=600
+        for i in range(len(x_block)):
+            x_block[i]-=10
         for i in range(len(x_platform)):
             x_platform[i]-=10
     elif keys[pygame.K_a] and x_player<=150: #движение фона вправо
         bg_x+=10
         x_player=150
+        for i in range(len(x_block)):
+            x_block[i]+=10
         for i in range(len(x_platform)):
             x_platform[i]+=10
     if bg_x==-bg_width:
@@ -129,7 +136,7 @@ while True:
     elif bg_x>=bg_width:
         bg_x=0
 
-    if event.type == pygame.KEYUP:   # анимация стояния персонажа             
+    if event.type == pygame.KEYUP:   # анимация стояния персонажа         
         if event.key == pygame.K_a:
             anim=0
             poza=True
@@ -140,11 +147,16 @@ while True:
 
     player_rect = pygame.Rect(x_player, y_player, razmer_persa, razmer_persa)
     screen.blit(platform, (x_platform[0], y_platform[0]))
-    screen.blit(platform1, (x_platform[1], y_platform[1]))
-    platform_rect = platform.get_rect(topleft=(x_platform[0], y_platform[0]))
-    platform_rect1 = platform1.get_rect(topleft=(x_platform[1], y_platform[1]))
-    coloissia(platform_rect)
-    coloissia(platform_rect1)
+
+    for i in range(len(x_platform)):
+        screen.blit(platform, (x_platform[i], y_platform[i]))
+        platform_rect = platform.get_rect(topleft=(x_platform[i], y_platform[i]))
+        coloissia(platform_rect)
+
+    for i in range(len(x_block)):
+        screen.blit(block, (x_block[i], y_block[i]))
+        block_rect = block.get_rect(topleft=(x_block[i], y_block[i]))
+        coloissia(block_rect)
 
 
     pygame.display.update()
