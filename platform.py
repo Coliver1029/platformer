@@ -5,9 +5,13 @@ pygame.init()
 screen=pygame.display.set_mode((736,414))
 
 pygame.display.set_caption("My Game")
-platform=pygame.transform.scale(pygame.image.load("photo/platform.png"), (48,90))
+
+platform=pygame.transform.scale(pygame.image.load("photo/platform.png"), (50,100))
+platform1=pygame.transform.scale(pygame.image.load("photo/platform1.jpg"), (50,30))
+platform2=pygame.transform.scale(pygame.image.load("photo/platform2.png"), (50,70))
+platform3=pygame.transform.scale(pygame.image.load("photo/platform2.png"), (50,100))
 goblin=pygame.transform.scale(pygame.image.load("photo/goblin/goblin1.png"), (50,50))
-block=pygame.transform.scale(pygame.image.load("photo/block.jpg"), (50,50))
+block=pygame.transform.scale(pygame.image.load("photo/block.jpg"), (40,40))
 bg=pygame.image.load("photo/bg.jpg").convert()
 jump_sound=pygame.mixer.Sound("sound/jump.mp3")
 bg_sound=pygame.mixer.Sound("sound/sound.wav")
@@ -61,10 +65,10 @@ bg_x=0
 jumping=None
 zemla=380
 bg_width, bg_height=bg.get_size()
-x_platform=[600]
-y_platform=[285]
-x_block=[400,455,510,455]
-y_block=[320,320,320,270]
+x_platform=[600,800,1000,1200]
+y_platform=[285,330,300,285]
+x_block=[415,455,495,455]
+y_block=[340,340,340,300]
 while True:
     time.tick(60)
 
@@ -148,10 +152,22 @@ while True:
     player_rect = pygame.Rect(x_player, y_player, razmer_persa, razmer_persa)
     screen.blit(platform, (x_platform[0], y_platform[0]))
 
-    for i in range(len(x_platform)):
-        screen.blit(platform, (x_platform[i], y_platform[i]))
-        platform_rect = platform.get_rect(topleft=(x_platform[i], y_platform[i]))
-        coloissia(platform_rect)
+
+    screen.blit(platform, (x_platform[0], y_platform[0]))
+    platform_rect = platform.get_rect(topleft=(x_platform[0], y_platform[0]))
+    coloissia(platform_rect)
+
+    screen.blit(platform1, (x_platform[1], y_platform[1]))
+    platform1_rect = platform1.get_rect(topleft=(x_platform[1], y_platform[1]))
+    coloissia(platform1_rect)
+
+    screen.blit(platform2, (x_platform[2], y_platform[2]))
+    platform2_rect = platform2.get_rect(topleft=(x_platform[2], y_platform[2]))
+    coloissia(platform2_rect)
+
+    screen.blit(platform, (x_platform[3], y_platform[3]))
+    platform3_rect = platform.get_rect(topleft=(x_platform[3], y_platform[3]))
+    coloissia(platform3_rect)
 
     for i in range(len(x_block)):
         screen.blit(block, (x_block[i], y_block[i]))
