@@ -6,6 +6,16 @@ screen=pygame.display.set_mode((736,414))
 
 pygame.display.set_caption("My Game")
 
+interface=pygame.image.load("photo/interface.jpg").convert_alpha()
+button=pygame.transform.scale(pygame.image.load("photo/button.png"), (200,100))
+interface=pygame.transform.scale(pygame.image.load("photo/interface.jpg"), (736,414))
+pause=pygame.transform.scale(pygame.image.load("photo/pause.png"), (90,100))
+game_state="menu"
+button_rect = button.get_rect(topleft=(270, 150))
+pause_rect = pause.get_rect(topleft=(640, 0))
+interface_rect = interface.get_rect(topleft=(0, 0))
+
+
 platform_files = [
     "photo/platform.png",
     "photo/platform1.jpg",
@@ -23,7 +33,6 @@ block=pygame.transform.scale(pygame.image.load("photo/block.jpg"), (40,40))
 bg=pygame.image.load("photo/bg.jpg").convert()
 jump_sound=pygame.mixer.Sound("sound/jump.mp3")
 bg_sound=pygame.mixer.Sound("sound/sound.wav")
-bg_sound.play()
 def coloissia(w):
         global velocity_y, jumping, x_player, y_player, player_rect
         if player_rect.colliderect(w):
@@ -61,6 +70,7 @@ walk_right=[
 ]
 left=False
 right=True
+music=False
 anim=0
 anim_delay=5
 poza=None
@@ -90,83 +100,101 @@ while True:
     for event in pygame.event.get():
         if event.type==pygame.QUIT:
             exit()
-    keys = pygame.key.get_pressed()
+    if game_state=="menu":
+        if music==True:
+            bg_sound.stop()
+            music=False
+        pygame.display.update()
+        screen.blit(interface, interface_rect)
+        screen.blit(button, button_rect)
+        mouse_pos=pygame.mouse.get_pos()
+        mouse_click=pygame.mouse.get_pressed()
+        if button_rect.collidepoint(mouse_pos) and mouse_click[0]:
+            game_state="play"
+    if game_state=="play":
+        if music==False:
+            bg_sound.play()
+            music=True
+        keys = pygame.key.get_pressed()
+        if bg_x<=-bg_width: #передвижение фона
+            bg_x=0 
+        screen.blit(bg, (bg_x, 0))
+        screen.blit(bg, (bg_x+bg_width, 0))
+        screen.blit(bg, (bg_x-bg_width, 0))
 
-    if bg_x<=-bg_width: #передвижение фона
-        bg_x=0 
-    screen.blit(bg, (bg_x, 0))
-    screen.blit(bg, (bg_x+bg_width, 0))
-    screen.blit(bg, (bg_x-bg_width, 0))
-
-    if anim==3:
-        anim=0
-    if keys[pygame.K_a]:
-        left=True
-        right=False
-        anim_delay+=1
-        if anim_delay>=7:
-            anim_delay=0
-            anim+=1
-        poza=None
-        x_player-=player_speed
-    elif keys[pygame.K_d]:
-        left=False
-        right=True
-        anim_delay+=1
-        if anim_delay>=7:
-            anim_delay=0
-            anim+=1
-        poza=None
-        x_player+=player_speed
-    if keys[pygame.K_SPACE] and jumping==True:
-        jump_sound.play()
-        jumping = False
-        velocity_y = -jump_force
-    if right==True:
-        screen.blit(walk_right[anim], (x_player, y_player))
-    elif left==True:
-        screen.blit(walk_left[anim], (x_player, y_player))
-    if x_player<=50: #стоп игрока у края экрана слева
-        x_player=50
-    
-    if keys[pygame.K_d] and x_player>=600: #движение фона влево
-        bg_x-=10
-        x_player=600
-        for i in range(len(x_block)):
-            x_block[i]-=10
-        for i in range(len(x_platform)):
-            x_platform[i]-=10
-    elif keys[pygame.K_a] and x_player<=150: #движение фона вправо
-        bg_x+=10
-        x_player=150
-        for i in range(len(x_block)):
-            x_block[i]+=10
-        for i in range(len(x_platform)):
-            x_platform[i]+=10
-    if bg_x==-bg_width:
-        bg_x=0
-    elif bg_x>=bg_width:
-        bg_x=0
-
-    if event.type == pygame.KEYUP:   # анимация стояния персонажа         
-        if event.key == pygame.K_a:
+        if anim==3:
             anim=0
-            poza=True
-        elif event.key == pygame.K_d:                                                                                           
-            anim=0
-            poza=False      
-        poloshenie(poza)                          
+        if keys[pygame.K_a]:
+            left=True
+            right=False
+            anim_delay+=1
+            if anim_delay>=7:
+                anim_delay=0
+                anim+=1
+            poza=None
+            x_player-=player_speed
+        elif keys[pygame.K_d]:
+            left=False
+            right=True
+            anim_delay+=1
+            if anim_delay>=7:
+                anim_delay=0
+                anim+=1
+            poza=None
+            x_player+=player_speed
+        if keys[pygame.K_SPACE] and jumping==True:
+            jump_sound.play()
+            jumping = False
+            velocity_y = -jump_force
+        if right==True:
+            screen.blit(walk_right[anim], (x_player, y_player))
+        elif left==True:
+            screen.blit(walk_left[anim], (x_player, y_player))
+        if x_player<=50: #стоп игрока у края экрана слева
+            x_player=50
+        
+        if keys[pygame.K_d] and x_player>=600: #движение фона влево
+            bg_x-=10
+            x_player=600
+            for i in range(len(x_block)):
+                x_block[i]-=10
+            for i in range(len(x_platform)):
+                x_platform[i]-=10
+        elif keys[pygame.K_a] and x_player<=150: #движение фона вправо
+            bg_x+=10
+            x_player=150
+            for i in range(len(x_block)):
+                x_block[i]+=10
+            for i in range(len(x_platform)):
+                x_platform[i]+=10
+        if bg_x==-bg_width:
+            bg_x=0
+        elif bg_x>=bg_width:
+            bg_x=0
 
-    player_rect = pygame.Rect(x_player, y_player, razmer_persa, razmer_persa)
-    for i in range(len(x_platform)):
-        screen.blit(platform[i], (x_platform[i], y_platform[i]))
-        platform_rect = platform[i].get_rect(topleft=(x_platform[i], y_platform[i]))
-        coloissia(platform_rect)
+        if event.type == pygame.KEYUP:   # анимация стояния персонажа         
+            if event.key == pygame.K_a:
+                anim=0
+                poza=True
+            elif event.key == pygame.K_d:                                                                                           
+                anim=0
+                poza=False      
+            poloshenie(poza)                          
 
-    for i in range(len(x_block)):
-        screen.blit(block, (x_block[i], y_block[i]))
-        block_rect = block.get_rect(topleft=(x_block[i], y_block[i]))
-        coloissia(block_rect)
+        player_rect = pygame.Rect(x_player, y_player, razmer_persa, razmer_persa)
+        for i in range(len(x_platform)):
+            screen.blit(platform[i], (x_platform[i], y_platform[i]))
+            platform_rect = platform[i].get_rect(topleft=(x_platform[i], y_platform[i]))
+            coloissia(platform_rect)
 
+        for i in range(len(x_block)):
+            screen.blit(block, (x_block[i], y_block[i]))
+            block_rect = block.get_rect(topleft=(x_block[i], y_block[i]))
+            coloissia(block_rect)
 
-    pygame.display.update()
+        mouse_pos=pygame.mouse.get_pos()
+        mouse_click=pygame.mouse.get_pressed()
+        screen.blit(pause, pause_rect)
+        if pause_rect.collidepoint(mouse_pos) and mouse_click[0]:
+            game_state="menu"
+        pygame.display.update()
