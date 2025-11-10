@@ -8,11 +8,13 @@ pygame.display.set_caption("My Game")
 
 interface=pygame.image.load("photo/interface.jpg").convert_alpha()
 button=pygame.transform.scale(pygame.image.load("photo/button.png"), (200,100))
+button_hover=pygame.transform.scale(pygame.image.load("photo/button1.png"), (200,100))
 interface=pygame.transform.scale(pygame.image.load("photo/interface.jpg"), (736,414))
-pause=pygame.transform.scale(pygame.image.load("photo/pause.png"), (90,100))
+pause=pygame.transform.scale(pygame.image.load("photo/pause.png"), (70,65))
+pause_hover=pygame.transform.scale(pygame.image.load("photo/pause1.png"), (70,65))
 game_state="menu"
 button_rect = button.get_rect(topleft=(270, 150))
-pause_rect = pause.get_rect(topleft=(640, 0))
+pause_rect = pause.get_rect(topleft=(665, 0))
 interface_rect = interface.get_rect(topleft=(0, 0))
 
 
@@ -100,15 +102,17 @@ while True:
     for event in pygame.event.get():
         if event.type==pygame.QUIT:
             exit()
-    if game_state=="menu":
+    if game_state=="menu":  #состояние игры
         if music==True:
             bg_sound.stop()
             music=False
         pygame.display.update()
         screen.blit(interface, interface_rect)
-        screen.blit(button, button_rect)
+        screen.blit(button_hover, button_rect)
         mouse_pos=pygame.mouse.get_pos()
         mouse_click=pygame.mouse.get_pressed()
+        if button_rect.collidepoint(mouse_pos):
+            screen.blit(button, button_rect)
         if button_rect.collidepoint(mouse_pos) and mouse_click[0]:
             game_state="play"
     if game_state=="play":
@@ -118,6 +122,7 @@ while True:
         keys = pygame.key.get_pressed()
         if bg_x<=-bg_width: #передвижение фона
             bg_x=0 
+            
         screen.blit(bg, (bg_x, 0))
         screen.blit(bg, (bg_x+bg_width, 0))
         screen.blit(bg, (bg_x-bg_width, 0))
@@ -195,6 +200,8 @@ while True:
         mouse_pos=pygame.mouse.get_pos()
         mouse_click=pygame.mouse.get_pressed()
         screen.blit(pause, pause_rect)
+        if pause_rect.collidepoint(mouse_pos):
+            screen.blit(pause_hover, pause_rect)
         if pause_rect.collidepoint(mouse_pos) and mouse_click[0]:
             game_state="menu"
         pygame.display.update()
