@@ -14,8 +14,10 @@ pause=pygame.transform.scale(pygame.image.load("photo/pause.png"), (70,65))
 pause_hover=pygame.transform.scale(pygame.image.load("photo/pause1.png"), (70,65))
 enemy=pygame.transform.scale(pygame.image.load("photo/enemy.png"), (50,50))
 dead=pygame.transform.scale(pygame.image.load("photo/dead.png"), (300,140))
+dead_button=pygame.transform.scale(pygame.image.load("photo/dead_button.png"), (175,80))
 game_state="menu"
 button_rect = button.get_rect(topleft=(270, 150))
+dead_button_rect = dead_button.get_rect(topleft=(280,250))
 pause_rect = pause.get_rect(topleft=(665, 0))
 interface_rect = interface.get_rect(topleft=(0, 0))
 
@@ -122,6 +124,18 @@ while True:
         pygame.display.update()
         screen.blit(interface, interface_rect)
         screen.blit(dead, (218,50))
+        screen.blit(dead_button, dead_button_rect)
+        mouse_pos=pygame.mouse.get_pos()
+        mouse_click=pygame.mouse.get_pressed()
+        if dead_button_rect.collidepoint(mouse_pos) and mouse_click[0]:
+            x_player, y_player=250, 300
+            x_enemy,y_enemy= 1500, 320  
+            x_platform=[600,800,1000,1200,1400,1600]
+            y_platform=[285,330,300,285,255,265]
+            x_block=[415,455,495,455]
+            y_block=[340,340,340,300]
+            bg_x=0
+            game_state="play" 
     if game_state=="play":
         if music==False:
             bg_sound.play()
