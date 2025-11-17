@@ -136,8 +136,8 @@ while True:
             y_platform=[285,330,300,285,255,265,265]
             x_block=[415,455,495,455]
             y_block=[340,340,340,300]
-            x_enemy=[1500,1650]
-            y_enemy=[320,320]
+            x_enemy=[1500,1765]
+            y_enemy=[320,220]
 
             bg_x=0
             game_state="play" 
