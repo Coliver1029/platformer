@@ -29,8 +29,9 @@ platform_files = [
     "photo/platform4.png",
     "photo/platform5.png",
     "photo/platform5.png",
+    "photo/platform5.png",
 ]
-platform_size=((50, 100), (50, 30), (50, 70), (50, 100), (50, 120),(65,40),(65,40))
+platform_size=((50, 100), (50, 30), (50, 70), (50, 100), (50, 120),(65,40),(65,40),(65,40))
 platform=[]
 for file, size in zip(platform_files, platform_size):
     platform.append(pygame.transform.scale(pygame.image.load(file), (size)))
@@ -40,6 +41,7 @@ block=pygame.transform.scale(pygame.image.load("photo/block.jpg"), (40,40))
 bg=pygame.image.load("photo/bg.jpg").convert()
 jump_sound=pygame.mixer.Sound("sound/jump.mp3")
 bg_sound=pygame.mixer.Sound("sound/sound.wav")
+over_sound=pygame.mixer.Sound("sound/over.mp3")
 def coloissia(w):
         global velocity_y, jumping, x_player, y_player, player_rect
         if player_rect.colliderect(w):
@@ -82,8 +84,8 @@ anim=0
 anim_delay=5
 poza=None
 x_player, y_player=250, 300
-x_enemy=[1500,1765]
-y_enemy=[320,220]
+x_enemy=[1500,1760]
+y_enemy=[320,218]
 gravity=1.2
 velocity_y=0
 player_speed=10
@@ -92,8 +94,8 @@ bg_x=0
 jumping=None
 zemla=380
 bg_width, bg_height=bg.get_size()
-x_platform=[600,800,1000,1200,1400,1600,1750]
-y_platform=[285,330,300,285,255,265,265]
+x_platform=[600,800,1000,1200,1400,1600,1750,1850]
+y_platform=[285,330,300,285,255,265,265,265]
 x_block=[415,455,495,455]
 y_block=[340,340,340,300]
 while True:
@@ -121,8 +123,10 @@ while True:
         if button_rect.collidepoint(mouse_pos):
             screen.blit(button, button_rect)
         if button_rect.collidepoint(mouse_pos) and mouse_click[0]:
+            bg_sound.play()
             game_state="play"
     if game_state=="dead":
+        bg_sound.stop()
         pygame.display.update()
         screen.blit(interface, interface_rect)
         screen.blit(dead, (218,50))
@@ -131,19 +135,18 @@ while True:
         mouse_click=pygame.mouse.get_pressed()
         if dead_button_rect.collidepoint(mouse_pos) and mouse_click[0]:
             x_player, y_player=250, 300
-            x_enemy,y_enemy= 1500, 320  
-            x_platform=[600,800,1000,1200,1400,1600,1750]
-            y_platform=[285,330,300,285,255,265,265]
+            x_platform=[600,800,1000,1200,1400,1600,1750,1850]
+            y_platform=[285,330,300,285,255,265,265,265]
             x_block=[415,455,495,455]
             y_block=[340,340,340,300]
-            x_enemy=[1500,1765]
-            y_enemy=[320,220]
-
+            x_enemy=[1500,1760]
+            y_enemy=[320,218]
             bg_x=0
+            bg_sound.play()
             game_state="play" 
     if game_state=="play":
+        bg_sound.play
         if music==False:
-            bg_sound.play()
             music=True
         keys = pygame.key.get_pressed()
         if bg_x<=-bg_width: #передвижение фона
@@ -229,6 +232,7 @@ while True:
         for x,y in zip(x_enemy, y_enemy):
             screen.blit(enemy,(x,y))
             if player_rect.colliderect(enemy.get_rect(topleft=(x,y))):
+                over_sound.play()
                 game_state="dead"
         mouse_pos=pygame.mouse.get_pos()
         mouse_click=pygame.mouse.get_pressed()
