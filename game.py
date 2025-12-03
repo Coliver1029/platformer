@@ -38,6 +38,7 @@ for file, size in zip(platform_files, platform_size):
 
 goblin=pygame.transform.scale(pygame.image.load("photo/goblin/goblin1.png"), (60,60))
 block=pygame.transform.scale(pygame.image.load("photo/block.jpg"), (40,40))
+coin=pygame.transform.scale(pygame.image.load("photo/coin.png"), (50,40))
 bg=pygame.image.load("photo/bg.jpg").convert()
 jump_sound=pygame.mixer.Sound("sound/jump.mp3")
 bg_sound=pygame.mixer.Sound("sound/sound.wav")
@@ -86,6 +87,8 @@ poza=None
 x_player, y_player=250, 300
 x_enemy=[1500,1760]
 y_enemy=[320,218]
+x_coin=1600
+y_coin=330
 gravity=1.2
 velocity_y=0
 player_speed=10
@@ -98,6 +101,7 @@ x_platform=[600,800,1000,1200,1400,1600,1750,1850]
 y_platform=[285,330,300,285,255,265,265,265]
 x_block=[415,455,495,455]
 y_block=[340,340,340,300]
+coin_rect = dead_button.get_rect(topleft=(x_coin, y_coin))
 while True:
     time.tick(60)
 
@@ -134,7 +138,9 @@ while True:
         mouse_pos=pygame.mouse.get_pos()
         mouse_click=pygame.mouse.get_pressed()
         if dead_button_rect.collidepoint(mouse_pos) and mouse_click[0]:
-            x_player, y_player=250, 300
+            over_sound.stop()
+            x_coin,y_coin=1600,330
+            x_player, y_player=250,300
             x_platform=[600,800,1000,1200,1400,1600,1750,1850]
             y_platform=[285,330,300,285,255,265,265,265]
             x_block=[415,455,495,455]
@@ -155,6 +161,8 @@ while True:
         screen.blit(bg, (bg_x, 0))
         screen.blit(bg, (bg_x+bg_width, 0))
         screen.blit(bg, (bg_x-bg_width, 0))
+
+        screen.blit(coin,(x_coin,y_coin))
 
         if anim==3:
             anim=0
@@ -187,16 +195,18 @@ while True:
         if x_player<=50: #стоп игрока у края экрана слева
             x_player=50
         
-        if keys[pygame.K_d] and x_player>=600: #движение фона влево
+        if keys[pygame.K_d] and x_player>=450: #движение фона влево
+            x_coin-=10
             for i in range(len(x_enemy)):
                 x_enemy[i]-=10
             bg_x-=10
-            x_player=600
+            x_player=450
             for i in range(len(x_block)):
                 x_block[i]-=10
             for i in range(len(x_platform)):
                 x_platform[i]-=10
         elif keys[pygame.K_a] and x_player<=150: #движение фона вправо
+            x_coin+=10
             for i in range(len(x_enemy)):
                 x_enemy[i]+=10
             bg_x+=10
@@ -234,6 +244,9 @@ while True:
             if player_rect.colliderect(enemy.get_rect(topleft=(x,y))):
                 over_sound.play()
                 game_state="dead"
+        if player_rect.colliderect(coin.get_rect(topleft=(x_coin,y_coin))):
+            print("Coin collected!")
+            y_coin=900
         mouse_pos=pygame.mouse.get_pos()
         mouse_click=pygame.mouse.get_pressed()
         screen.blit(pause, pause_rect)
