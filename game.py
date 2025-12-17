@@ -15,8 +15,12 @@ pause_hover=pygame.transform.scale(pygame.image.load("photo/pause1.png"), (70,65
 enemy=pygame.transform.scale(pygame.image.load("photo/enemy.png"), (50,50))
 dead=pygame.transform.scale(pygame.image.load("photo/dead.png"), (300,140))
 dead_button=pygame.transform.scale(pygame.image.load("photo/dead_button.png"), (175,80))
+flag=pygame.transform.scale(pygame.image.load("photo/flag.png"), (100,90))
+win=pygame.transform.scale(pygame.image.load("photo/win.jpg"), (736,414))
+menu_button=pygame.transform.scale(pygame.image.load("photo/menu.png"), (240,150))
 game_state="menu"
 button_rect = button.get_rect(topleft=(270, 150))
+menu_button_rect = button.get_rect(topleft=(250, 270))
 dead_button_rect = dead_button.get_rect(topleft=(280,250))
 pause_rect = pause.get_rect(topleft=(665, 0))
 interface_rect = interface.get_rect(topleft=(0, 0))
@@ -65,6 +69,17 @@ def poloshenie(yslovie):
         screen.blit(walk_left[0], (x_player, y_player))
     elif yslovie==False:
         screen.blit(walk_right[0], (x_player, y_player))
+def reboot(x_coin,y_coin,x_player,y_player,x_platform,y_platform,x_block,y_block,x_enemy,y_enemy,x_flag,y_flag):
+    x_coin,y_coin=1600,330
+    x_player, y_player=250,300
+    x_platform=[600,800,1000,1200,1400,1600,1750,1850]
+    y_platform=[285,330,300,285,255,265,265,265]
+    x_block=[415,455,495,455]
+    y_block=[340,340,340,300]
+    x_enemy=[1500,1760]
+    y_enemy=[320,218]
+    x_flag,y_flag=2200,285
+    return x_coin,y_coin,x_player,y_player,x_platform,y_platform,x_block,y_block,x_enemy,y_enemy,x_flag,y_flag
 razmer_persa=60
 walk_left=[
     pygame.transform.scale(pygame.image.load("photo/sprite/left/sprite 1.png"), (razmer_persa, razmer_persa)),
@@ -96,6 +111,7 @@ jump_force=17
 bg_x=0
 jumping=None
 zemla=380
+x_flag,y_flag=2200,285
 bg_width, bg_height=bg.get_size()
 x_platform=[600,800,1000,1200,1400,1600,1750,1850]
 y_platform=[285,330,300,285,255,265,265,265]
@@ -104,7 +120,6 @@ y_block=[340,340,340,300]
 coin_rect = dead_button.get_rect(topleft=(x_coin, y_coin))
 while True:
     time.tick(60)
-
     velocity_y += gravity
     y_player += velocity_y
 
@@ -139,17 +154,19 @@ while True:
         mouse_click=pygame.mouse.get_pressed()
         if dead_button_rect.collidepoint(mouse_pos) and mouse_click[0]:
             over_sound.stop()
-            x_coin,y_coin=1600,330
-            x_player, y_player=250,300
-            x_platform=[600,800,1000,1200,1400,1600,1750,1850]
-            y_platform=[285,330,300,285,255,265,265,265]
-            x_block=[415,455,495,455]
-            y_block=[340,340,340,300]
-            x_enemy=[1500,1760]
-            y_enemy=[320,218]
+            x_coin,y_coin,x_player,y_player,x_platform,y_platform,x_block,y_block,x_enemy,y_enemy,x_flag,y_flag = reboot(x_coin,y_coin,x_player,y_player,x_platform,y_platform,x_block,y_block,x_enemy,y_enemy,x_flag,y_flag)
             bg_x=0
             bg_sound.play()
             game_state="play" 
+    if game_state=="win":
+        pygame.display.update()
+        screen.blit(win, (0,0))
+        screen.blit(menu_button,menu_button_rect)
+        mouse_pos=pygame.mouse.get_pos()
+        mouse_click=pygame.mouse.get_pressed()
+        if menu_button_rect.collidepoint(mouse_pos) and mouse_click[0]:
+            game_state="menu"
+            x_coin,y_coin,x_player,y_player,x_platform,y_platform,x_block,y_block,x_enemy,y_enemy,x_flag,y_flag = reboot(x_coin,y_coin,x_player,y_player,x_platform,y_platform,x_block,y_block,x_enemy,y_enemy,x_flag,y_flag)
     if game_state=="play":
         bg_sound.play
         if music==False:
@@ -163,6 +180,7 @@ while True:
         screen.blit(bg, (bg_x-bg_width, 0))
 
         screen.blit(coin,(x_coin,y_coin))
+        screen.blit(flag,(x_flag,y_flag)) 
 
         if anim==3:
             anim=0
@@ -196,6 +214,7 @@ while True:
             x_player=50
         
         if keys[pygame.K_d] and x_player>=450: #движение фона влево
+            x_flag-=10
             x_coin-=10
             for i in range(len(x_enemy)):
                 x_enemy[i]-=10
@@ -206,6 +225,7 @@ while True:
             for i in range(len(x_platform)):
                 x_platform[i]-=10
         elif keys[pygame.K_a] and x_player<=150: #движение фона вправо
+            x_flag+=10
             x_coin+=10
             for i in range(len(x_enemy)):
                 x_enemy[i]+=10
@@ -244,8 +264,9 @@ while True:
             if player_rect.colliderect(enemy.get_rect(topleft=(x,y))):
                 over_sound.play()
                 game_state="dead"
+        if player_rect.colliderect(flag.get_rect(topleft=(x_flag, y_flag))):
+            game_state="win"
         if player_rect.colliderect(coin.get_rect(topleft=(x_coin,y_coin))):
-            print("Coin collected!")
             y_coin=900
         mouse_pos=pygame.mouse.get_pos()
         mouse_click=pygame.mouse.get_pressed()
