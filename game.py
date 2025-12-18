@@ -47,6 +47,7 @@ bg=pygame.image.load("photo/bg.jpg").convert()
 jump_sound=pygame.mixer.Sound("sound/jump.mp3")
 bg_sound=pygame.mixer.Sound("sound/sound.wav")
 over_sound=pygame.mixer.Sound("sound/over.mp3")
+win_sound=pygame.mixer.Sound("sound/win.mp3")
 def coloissia(w):
         global velocity_y, jumping, x_player, y_player, player_rect
         if player_rect.colliderect(w):
@@ -117,7 +118,6 @@ x_platform=[600,800,1000,1200,1400,1600,1750,1850]
 y_platform=[285,330,300,285,255,265,265,265]
 x_block=[415,455,495,455]
 y_block=[340,340,340,300]
-coin_rect = dead_button.get_rect(topleft=(x_coin, y_coin))
 while True:
     time.tick(60)
     velocity_y += gravity
@@ -157,14 +157,16 @@ while True:
             x_coin,y_coin,x_player,y_player,x_platform,y_platform,x_block,y_block,x_enemy,y_enemy,x_flag,y_flag = reboot(x_coin,y_coin,x_player,y_player,x_platform,y_platform,x_block,y_block,x_enemy,y_enemy,x_flag,y_flag)
             bg_x=0
             bg_sound.play()
-            game_state="play" 
+            game_state="play"
     if game_state=="win":
+        bg_sound.stop()
         pygame.display.update()
         screen.blit(win, (0,0))
         screen.blit(menu_button,menu_button_rect)
         mouse_pos=pygame.mouse.get_pos()
         mouse_click=pygame.mouse.get_pressed()
         if menu_button_rect.collidepoint(mouse_pos) and mouse_click[0]:
+            win_sound.stop()
             game_state="menu"
             x_coin,y_coin,x_player,y_player,x_platform,y_platform,x_block,y_block,x_enemy,y_enemy,x_flag,y_flag = reboot(x_coin,y_coin,x_player,y_player,x_platform,y_platform,x_block,y_block,x_enemy,y_enemy,x_flag,y_flag)
     if game_state=="play":
@@ -266,6 +268,7 @@ while True:
                 game_state="dead"
         if player_rect.colliderect(flag.get_rect(topleft=(x_flag, y_flag))):
             game_state="win"
+            win_sound.play()
         if player_rect.colliderect(coin.get_rect(topleft=(x_coin,y_coin))):
             y_coin=900
         mouse_pos=pygame.mouse.get_pos()
